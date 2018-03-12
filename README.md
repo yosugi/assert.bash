@@ -17,7 +17,7 @@ ERR 2 -lt 1
 $ assert "str_val" match val$  # regexp
 OK
 $ assert "str_val" match ^val
-ERR str_val /^val/
+ERR str_val match ^val
 $ asseret -f exits.txt         # file exists
 OK
 $ asseret -d nothing/dir       # directory exists
@@ -30,4 +30,4 @@ ERR -d nothing/dir
 
 ## Version
 
-0.1.0
+0.2.0

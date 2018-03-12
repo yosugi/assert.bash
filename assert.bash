@@ -20,7 +20,7 @@
 # $ assert "str_val" match val$  # regexp
 # OK
 # $ assert "str_val" match ^val
-# ERR "str_val" match ^val
+# ERR str_val match ^val
 # $ asseret -f exits.txt         # file exists
 # OK
 # $ asseret -d nothing/dir       # directory exists
