@@ -45,9 +45,6 @@ function main() {
     [ $? = 1 ] && echo "OK" || echo "NG"
     [ "$actual" = "ERR str_val match ^val" ] && echo "OK" || echo "NG"
 
-    local test_dir="./test_dir"
-    mkdir -p $test_dir
-
     local test_file="$test_dir/test_file.txt"
     echo "test" > $test_file
 
@@ -69,7 +66,33 @@ function main() {
     [ $? = 1 ] && echo "OK" || echo "NG"
     [ "$actual" = "ERR -f $test_dir/nothing_file" ] && echo "OK" || echo "NG"
 
-    rm -rf $test_dir
+    # file contents equal
+    local same_file="$test_dir/same_file.txt"
+    local diff_file="$test_dir/diff_file.txt"
+    echo "same" > $same_file
+    echo "diff" > $diff_file
+
+    actual=$(assert $same_file cmp $same_file)
+    [ $? = 0 ] && echo "OK" || echo "NG"
+    [ "$actual" = "OK" ] && echo "OK" || echo "NG"
+
+    actual=$(assert $same_file cmp $diff_file)
+    [ $? = 1 ] && echo "OK" || echo "NG"
+    [ "$actual" = "ERR $same_file cmp $diff_file" ] && echo "OK" || echo "NG"
+
+    # file contents not equal
+    actual=$(assert $same_file !cmp $diff_file)
+    [ $? = 0 ] && echo "OK" || echo "NG"
+    [ "$actual" = "OK" ] && echo "OK" || echo "NG"
+
+    actual=$(assert $same_file !cmp $same_file)
+    [ $? = 1 ] && echo "OK" || echo "NG"
+    [ "$actual" = "ERR $same_file !cmp $same_file" ] && echo "OK" || echo "NG"
 }
 
+test_dir="./test_dir"
+mkdir -p $test_dir
+
 main
+
+rm -rf $test_dir
