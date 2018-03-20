@@ -38,68 +38,67 @@
 # License: MIT
 
 function assert() {
-    # regexp test 
-    if [ $# -eq 3 ]; then
-        # regexp test
-        if [ $2 = 'match' ]; then
-            local regexp
-            regexp=$3
-            if [[ $1 =~ $regexp ]]; then
+    # 2 arguments test
+    if [ $# -eq 2 ]; then
+        expr "$1" : "^-[zndfserwx]$" > /dev/null
+        if [ $? = 0 ]; then
+            if [ "$1" "$2" ]; then
                 echo "OK"
                 return 0
             fi
             echo "ERR $@"
             return 1
         fi
+       
+        # string test
+        if [ "$1" = "$2" ]; then
+            echo "OK"
+            return 0
+        else
+            echo "ERR $1 $2"
+            return 1
+        fi
+    fi
 
-        # file contents test
-        if [ $2 = 'cmp' ]; then
-            eval cmp -s "$1" "$3"
-            if [[ $? -eq 0 ]]; then
-                echo "OK"
-                return 0
-            fi
-            echo "ERR $@"
-            return 1
-        fi
-
-        # file contents test
-        if [ $2 = '!cmp' ]; then
-            eval cmp -s "$1" "$3"
-            if [[ $? -eq 1 ]]; then
-                echo "OK"
-                return 0
-            fi
-            echo "ERR $@"
-            return 1
-        fi
-    
-        # other test
-        if [ "$1" "$2" "$3" ]; then
+    # regexp test
+    if [ $2 = 'match' ]; then
+        local regexp
+        regexp=$3
+        if [[ $1 =~ $regexp ]]; then
             echo "OK"
             return 0
         fi
         echo "ERR $@"
         return 1
     fi
-    
+
+    # file contents equal test
+    if [ $2 = 'cmp' ]; then
+        eval cmp -s "$1" "$3"
+        if [[ $? -eq 0 ]]; then
+            echo "OK"
+            return 0
+        fi
+        echo "ERR $@"
+        return 1
+    fi
+
+    # file contents not equal test
+    if [ $2 = '!cmp' ]; then
+        eval cmp -s "$1" "$3"
+        if [[ $? -eq 1 ]]; then
+            echo "OK"
+            return 0
+        fi
+        echo "ERR $@"
+        return 1
+    fi
+
     # other test
-    expr "$1" : "^-[zndfserwx]$" > /dev/null
-    if [ $? = 0 ]; then
-        if [ "$1" "$2" ]; then
-            echo "OK"
-            return 0
-        fi
-        echo "ERR $@"
-        return 1
-    fi
-   
-    # string test
-    if [ "$1" = "$2" ]; then
+    if [ "$1" "$2" "$3" ]; then
         echo "OK"
         return 0
-    else
-        echo "ERR $1 $2"
-        return 1
     fi
+    echo "ERR $@"
+    return 1
 }
