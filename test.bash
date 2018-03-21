@@ -4,7 +4,7 @@
 #
 #   bash test.bash
 
-source assert.bash
+source ./assert.bash
 
 function main() {
     local actual
@@ -46,7 +46,7 @@ function main() {
     [ "$actual" = "ERR str_val match ^val" ] && echo "OK" || echo "NG"
 
     local test_file="$test_dir/test_file.txt"
-    echo "test" > $test_file
+    echo "test" > "$test_file"
 
     # directory exists
     actual=$(assert -d "$test_dir")
@@ -69,23 +69,23 @@ function main() {
     # file contents equal
     local same_file="$test_dir/same_file.txt"
     local diff_file="$test_dir/diff_file.txt"
-    echo "same" > $same_file
-    echo "diff" > $diff_file
+    echo "same" > "$same_file"
+    echo "diff" > "$diff_file"
 
-    actual=$(assert $same_file cmp $same_file)
+    actual=$(assert "$same_file" cmp "$same_file")
     [ $? = 0 ] && echo "OK" || echo "NG"
     [ "$actual" = "OK" ] && echo "OK" || echo "NG"
 
-    actual=$(assert $same_file cmp $diff_file)
+    actual=$(assert "$same_file" cmp "$diff_file")
     [ $? = 1 ] && echo "OK" || echo "NG"
     [ "$actual" = "ERR $same_file cmp $diff_file" ] && echo "OK" || echo "NG"
 
     # file contents not equal
-    actual=$(assert $same_file !cmp $diff_file)
+    actual=$(assert "$same_file" !cmp "$diff_file")
     [ $? = 0 ] && echo "OK" || echo "NG"
     [ "$actual" = "OK" ] && echo "OK" || echo "NG"
 
-    actual=$(assert $same_file !cmp $same_file)
+    actual=$(assert "$same_file" !cmp "$same_file")
     [ $? = 1 ] && echo "OK" || echo "NG"
     [ "$actual" = "ERR $same_file !cmp $same_file" ] && echo "OK" || echo "NG"
 }
